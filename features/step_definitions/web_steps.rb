@@ -55,6 +55,83 @@ And /^I am logged into the admin panel$/ do
   end
 end
 
+And /^I am logged in not as admin$/ do
+  User.create!({:login => 'wilma',
+                :password => 'abcde',
+                :email => 'wilma@flintstone.com',
+                :profile_id => 2,
+                :name => 'wilma',
+                :state => 'active'})
+  visit '/accounts/login'
+  fill_in 'user_login', :with => 'wilma'
+  fill_in 'user_password', :with => 'abcde'
+  click_button 'Login'
+  if page.respond_to? :should
+    page.should have_content('Login successful')
+  else
+    assert page.has_content?('Login successful')
+  end
+end
+
+And /^I am editing the page for article "(.+)"$/ do |article_id|
+  visit '/admin/content/edit/' + article_id
+end
+
+Given /^two articles exist$/ do
+  Article.create!({ :id => '1',
+                    :type => "Article",
+                    :title =>"Hello",
+                    :author => "fred",
+                    :body => "Yabba dabba doo",
+                    :published => true,
+                    :allow_comments => true,
+                    :published_at => "2013-03-14 02:49:11",
+                    :state => "published" })
+  Article.create!({ :id => '2',
+                    :type => "Article",
+                    :title =>"Hello",
+                    :author => "wilma",
+                    :body => "oh dear",
+                    :published => true,
+                    :allow_comments => true,
+                    :published_at => "2013-03-14 02:49:22",
+                    :state => "published" })
+end
+
+Given /^two comments exist$/ do
+  #Comment.create!({ :id => '1',
+  #                  :type => "Comment",
+  #                  :article_id =>"1",
+  #                  :author => "barney",
+  #                  :body => "huh",
+  #                  :email => "barney@rubble.com",
+  #                  :published => true,
+  #                  :state => "ham" })
+  #Comment.create!({ :id => '2',
+  #                  :type => "Comment",
+  #                  :article_id =>"2",
+  #                  :author => "betty",
+  #                  :body => "yes",
+  #                  :email => "betty@rubble.com",
+  #                  :published => true,
+  #                  :state => "ham" })
+  #
+  # fails with:
+  #     undefined method `comments_closed?' for nil:NilClass (NoMethodError)
+  #     ./app/models/feedback.rb:164:in `feedback_not_closed'
+  # could mock out Article.in_feedback_window?
+
+  Article.create!({ :id => '3',
+                    :type => "Article",
+                    :title =>"Hello",
+                    :author => "barney",
+                    :body => "huh",
+                    :published => true,
+                    :allow_comments => true,
+                    :published_at => "2013-03-14 02:49:33",
+                    :state => "published" })
+end
+
 # Single-line step scoper
 When /^(.*) within (.*[^:])$/ do |step, parent|
   with_scope(parent) { When step }
@@ -271,6 +348,18 @@ Then /^(?:|I )should have the following query string:$/ do |expected_pairs|
   else
     assert_equal expected_params, actual_params
   end
+end
+
+Then /^the article title should be one or the other$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the article content should be merged$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^(?:I )should see all merged article comments$/ do
+  pending # express the regexp above with the code you wish you had
 end
 
 Then /^show me the page$/ do

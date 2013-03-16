@@ -149,5 +149,14 @@
   </div>    
   </div>
 
+  <div class='separator'>
+    <h4><%= _("Merge Articles") %></h4>
+    <div class=''>
+      <%= text_field_tag 'merge_with', '' %>
+      <%= button_to "Merge", :action => "merge" %>
+      <span class='help-block'><%=_("Enter article id.  Merged articles will have their content merged, and the first author and title selected.") %></span>
+    </div>
+  </div>
+
 </div>
 

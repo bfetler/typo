@@ -50,6 +50,7 @@ group :development, :test do
   gem 'webrat'
   gem 'rspec-rails', '~> 2.0'
   gem 'simplecov', :require => false
+  gem 'railroady'
   gem 'sqlite3'
   gem 'cucumber'
   gem 'cucumber-rails', :require => false
