@@ -415,6 +415,15 @@ class Article < Content
   def access_by?(user)
     user.admin? || user_id == user.id
   end
+  
+  def is_owned_by_admin?
+#   if !user.nil?
+#     user.admin?
+#   else
+#     false
+#   end
+    user.nil? || user.admin?
+  end
 
   protected
 

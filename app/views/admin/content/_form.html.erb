@@ -149,14 +149,25 @@
   </div>    
   </div>
 
+  <% if @article.is_owned_by_admin? %>
   <div class='separator'>
     <h4><%= _("Merge Articles") %></h4>
     <div class=''>
-      <%= text_field_tag 'merge_with', '' %>
-      <%= button_to "Merge", :action => "merge" %>
+      <span>User id: <%= @article.user_id %></span><br/>
+      <%#= text_field_tag 'merge_with', '' %>
+      <%#= button_to "Merge", :controller => "admin/content", :action => "merge" %>
+      
+      <%= form_tag "/admin/content/merge" do %>  <!-- Started POST "/admin/content/new/4" for 127.0.0.1 -->
+
+        <%= hidden_field_tag "article_id", @article.id %>
+	<%= label_tag :merge_with, "Merge with" %>
+	<%= text_field_tag :merge_with %>
+	<%= submit_tag "Merge" %>
+      <% end %>
       <span class='help-block'><%=_("Enter article id.  Merged articles will have their content merged, and the first author and title selected.") %></span>
     </div>
   </div>
+  <% end %>
 
 </div>
 

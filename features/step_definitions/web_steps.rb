@@ -36,17 +36,23 @@ Given /^the blog is set up$/ do
                                    :base_url => 'http://localhost:3000'});
   Blog.default.save!
   User.create!({:login => 'admin',
-                :password => 'aaaaaaaa',
+                :password => 'abc456',
                 :email => 'joe@snow.com',
                 :profile_id => 1,
                 :name => 'admin',
+                :state => 'active'})
+  User.create!({:login => 'wilma',
+                :password => 'abcde',
+                :email => 'wilma@flintstone.com',
+                :profile_id => 2,
+                :name => 'wilma',
                 :state => 'active'})
 end
 
 And /^I am logged into the admin panel$/ do
   visit '/accounts/login'
   fill_in 'user_login', :with => 'admin'
-  fill_in 'user_password', :with => 'aaaaaaaa'
+  fill_in 'user_password', :with => 'abc456'
   click_button 'Login'
   if page.respond_to? :should
     page.should have_content('Login successful')
@@ -55,13 +61,7 @@ And /^I am logged into the admin panel$/ do
   end
 end
 
-And /^I am logged in not as admin$/ do
-  User.create!({:login => 'wilma',
-                :password => 'abcde',
-                :email => 'wilma@flintstone.com',
-                :profile_id => 2,
-                :name => 'wilma',
-                :state => 'active'})
+And /^I am logged in as wilma/ do
   visit '/accounts/login'
   fill_in 'user_login', :with => 'wilma'
   fill_in 'user_password', :with => 'abcde'
@@ -73,42 +73,28 @@ And /^I am logged in not as admin$/ do
   end
 end
 
-And /^I am editing the page for article "(.+)"$/ do |article_id|
-  visit '/admin/content/edit/' + article_id
-end
-
-Given /^two articles exist$/ do
-  Article.create!({ :id => '1',
-                    :type => "Article",
-                    :title =>"Hello",
-                    :author => "fred",
-                    :body => "Yabba dabba doo",
+Given /^article with user "(.+)", author "(.+)", title "(.+)", and body "(.+)" exists$/ do |user, author, title, body|
+  user_id = User.find_by_login(user).id
+  Article.create!({ :type => "Article",
+                    :user_id => user_id,
+                    :title => title,
+                    :author => author,
+                    :body => body,
                     :published => true,
                     :allow_comments => true,
-                    :published_at => "2013-03-14 02:49:11",
-                    :state => "published" })
-  Article.create!({ :id => '2',
-                    :type => "Article",
-                    :title =>"Hello",
-                    :author => "wilma",
-                    :body => "oh dear",
-                    :published => true,
-                    :allow_comments => true,
-                    :published_at => "2013-03-14 02:49:22",
+                    :published_at => "2013-03-15 08:09:00",
                     :state => "published" })
 end
 
 Given /^two comments exist$/ do
-  #Comment.create!({ :id => '1',
-  #                  :type => "Comment",
+  #Comment.create!({ :type => "Comment",
   #                  :article_id =>"1",
   #                  :author => "barney",
   #                  :body => "huh",
   #                  :email => "barney@rubble.com",
   #                  :published => true,
   #                  :state => "ham" })
-  #Comment.create!({ :id => '2',
-  #                  :type => "Comment",
+  #Comment.create!({ :type => "Comment",
   #                  :article_id =>"2",
   #                  :author => "betty",
   #                  :body => "yes",
@@ -121,15 +107,21 @@ Given /^two comments exist$/ do
   #     ./app/models/feedback.rb:164:in `feedback_not_closed'
   # could mock out Article.in_feedback_window?
 
-  Article.create!({ :id => '3',
-                    :type => "Article",
-                    :title =>"Hello",
+  Article.create!({ :type => "Article",
+                    :title =>"Huh",
                     :author => "barney",
                     :body => "huh",
                     :published => true,
                     :allow_comments => true,
                     :published_at => "2013-03-14 02:49:33",
                     :state => "published" })
+  #pending
+end
+
+And /^I am editing the page for article with title "(.+)"$/ do |title|
+  article_id = Article.find_by_title(title).id.to_s
+  visit '/admin/content/edit/' + article_id
+# save_and_open_page
 end
 
 # Single-line step scoper
@@ -201,6 +193,17 @@ end
 
 When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
   attach_file(field, File.expand_path(path))
+end
+
+Then /^(?:|I )should be editing the article page with title "(.+)"$/ do |title|
+# this is useless?
+  a = Article.find_by_title(title)
+  assert !a.nil?
+end
+
+Then /^the article title should be "(.+)"$/ do |title|
+  a = Article.find_by_title(title)
+  assert !a.nil?
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|

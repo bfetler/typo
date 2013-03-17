@@ -5,6 +5,22 @@ class Admin::ContentController < Admin::BaseController
   layout "administration", :except => [:show, :autosave]
 
   cache_sweeper :blog_sweeper
+  
+  def merge
+    puts "merge articles"
+    @article = params[:article_id]
+    params[:id] = params[:article_id]
+    puts "params: " + params.inspect
+    orig = Article.find_by_id(params[:id])
+    merge = Article.find_by_title(params[:merge_with])
+    puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
+    orig.body = orig.body + " " + merge.body  # insert "\n" ?
+    puts "merged body: " + orig.body
+    orig.save!
+    merge.destroy
+    redirect_to "edit"
+#    new_or_edit
+  end
 
   def auto_complete_for_article_keywords
     @items = Tag.find_with_char params[:article][:keywords].strip
@@ -138,10 +154,6 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def real_action_for(action); { 'add' => :<<, 'remove' => :delete}[action]; end
-
-  def merge
-    puts "merge articles"
-  end
 
   def new_or_edit
     id = params[:id]

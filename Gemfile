@@ -51,6 +51,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 2.0'
   gem 'simplecov', :require => false
   gem 'railroady'
+  gem 'launchy'
   gem 'sqlite3'
   gem 'cucumber'
   gem 'cucumber-rails', :require => false
