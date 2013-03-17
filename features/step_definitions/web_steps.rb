@@ -86,36 +86,15 @@ Given /^article with user "(.+)", author "(.+)", title "(.+)", and body "(.+)" e
                     :state => "published" })
 end
 
-Given /^two comments exist$/ do
-  #Comment.create!({ :type => "Comment",
-  #                  :article_id =>"1",
-  #                  :author => "barney",
-  #                  :body => "huh",
-  #                  :email => "barney@rubble.com",
-  #                  :published => true,
-  #                  :state => "ham" })
-  #Comment.create!({ :type => "Comment",
-  #                  :article_id =>"2",
-  #                  :author => "betty",
-  #                  :body => "yes",
-  #                  :email => "betty@rubble.com",
-  #                  :published => true,
-  #                  :state => "ham" })
-  #
-  # fails with:
-  #     undefined method `comments_closed?' for nil:NilClass (NoMethodError)
-  #     ./app/models/feedback.rb:164:in `feedback_not_closed'
-  # could mock out Article.in_feedback_window?
-
-  Article.create!({ :type => "Article",
-                    :title =>"Huh",
-                    :author => "barney",
-                    :body => "huh",
+Given /^comment with author "(.+)" and body "(.+)" for article with title "(.+)" exists$/ do |author, body, title|
+  article = Article.find_by_title(title)
+  Comment.create!({ :type => "Comment",
+                    :article_id => article.id,
+                    :author => author,
+                    :body => body,
+                    :email => author+"@rubble.com",
                     :published => true,
-                    :allow_comments => true,
-                    :published_at => "2013-03-14 02:49:33",
-                    :state => "published" })
-  #pending
+                    :state => "ham" })
 end
 
 And /^I am editing the page for article with title "(.+)"$/ do |title|
@@ -204,6 +183,16 @@ end
 Then /^the article title should be "(.+)"$/ do |title|
   a = Article.find_by_title(title)
   assert !a.nil?
+end
+
+Then /^the article with title "(.+)" should have body "(.+)"$/ do |title, body|
+  a = Article.find_by_title(title)
+  assert a.body == body
+end
+
+Then /^the article with title "(.+)" should have "(.+)" comments$/ do |title, number|
+  a = Article.find_by_title(title)
+  assert a.comments.count.to_s == number
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
