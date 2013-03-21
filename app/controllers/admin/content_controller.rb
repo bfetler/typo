@@ -7,20 +7,24 @@ class Admin::ContentController < Admin::BaseController
   cache_sweeper :blog_sweeper
   
   def merge
-    @article = params[:article_id]
+    puts "content merge"
+    puts "params: " + params.inspect
+    #@article = params[:article_id]
     params[:id] = params[:article_id]
-    orig = Article.find_by_id(params[:id])
-    merge = Article.find_by_title(params[:merge_with])
-    #puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
+    puts "params: " + params.inspect
+    orig = Article.find(params[:article_id])
+    #merge = Article.find_by_title(params[:merge_with])
+    merge = Article.find(params[:merge_with])
+    puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
     orig.body = orig.body + " " + merge.body  # insert "\n" fails
-    #puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+    puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
     merge.comments.each do |comment|
 #      orig.comments << comment       #fails
       comment.article_id = orig.id
       comment.save!                   #fails
     end
     merge.comments.clear
-    #puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+    puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
     orig.save!
     merge.destroy  #fails
     redirect_to "edit"
