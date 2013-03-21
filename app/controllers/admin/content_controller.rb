@@ -10,7 +10,7 @@ class Admin::ContentController < Admin::BaseController
     puts "content merge"
     puts "params: " + params.inspect
     #@article = params[:article_id]
-    params[:id] = params[:article_id]
+    #params[:id] = params[:article_id]
     puts "params: " + params.inspect
     orig = Article.find(params[:article_id])
     #merge = Article.find_by_title(params[:merge_with])
@@ -26,8 +26,8 @@ class Admin::ContentController < Admin::BaseController
     merge.comments.clear
     puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
     orig.save!
-    merge.destroy  #fails
-    redirect_to "edit"
+    merge.destroy  #succeeds, but tries to go to edit page for it
+    redirect_to :action => "edit", :id => :article_id
 #    new_or_edit
   end
 
