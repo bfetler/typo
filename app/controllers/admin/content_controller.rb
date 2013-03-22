@@ -29,7 +29,7 @@ class Admin::ContentController < Admin::BaseController
       #puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
       orig.save!
       #merge.save!
-      merge.destroy  # destroys previously associated comments as well
+      #merge.destroy  # destroys previously associated comments as well
     end
     redirect_to :controller => "admin/content", :action => "edit", :id => orig.id
     #return   # no method calls after redirect_to
