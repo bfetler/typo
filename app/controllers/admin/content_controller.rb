@@ -11,23 +11,33 @@ class Admin::ContentController < Admin::BaseController
     puts "params: " + params.inspect
     #@article = params[:article_id]
     #params[:id] = params[:article_id]
-    puts "params: " + params.inspect
+    #puts "params: " + params.inspect
     orig = Article.find(params[:article_id])
     #merge = Article.find_by_title(params[:merge_with])
-    merge = Article.find(params[:merge_with])
-    puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
-    orig.body = orig.body + " " + merge.body  # insert "\n" fails
-    puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
-    merge.comments.each do |comment|
-#      orig.comments << comment       #fails
-      comment.article_id = orig.id
-      comment.save!                   #fails
+    merge = Article.find_all_by_title(params[:merge_with]).last
+    puts "orig: "+orig.inspect
+    puts "merge: "+merge.inspect
+    puts "orig.id: " + orig.id.to_s
+    #if !merge or orig==merge
+    #  redirect_to :controller => "admin/content", :action => "edit", :id => orig.id
+    #  return
+    #end
+    if merge and orig != merge  # make sure redirect_to is last method then return
+      puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
+      orig.body = orig.body + " " + merge.body  # insert "\n" fails
+      puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+  #    merge.comments.each do |comment|
+  ##      orig.comments << comment       #fails
+  #      comment.article_id = orig.id
+  #      comment.save!                   #fails
+  #    end
+  #    merge.comments.clear
+      puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+      orig.save!
+  #    merge.destroy  #succeeds, but tries to go to edit page for it
     end
-    merge.comments.clear
-    puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
-    orig.save!
-    merge.destroy  #succeeds, but tries to go to edit page for it
-    redirect_to :action => "edit", :id => :article_id
+    redirect_to :controller => "admin/content", :action => "edit", :id => orig.id
+    #return
 #    new_or_edit
   end
 
