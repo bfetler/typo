@@ -7,37 +7,32 @@ class Admin::ContentController < Admin::BaseController
   cache_sweeper :blog_sweeper
   
   def merge
-    puts "content merge"
-    puts "params: " + params.inspect
-    #@article = params[:article_id]
-    #params[:id] = params[:article_id]
+    #puts "content merge"
     #puts "params: " + params.inspect
     orig = Article.find(params[:article_id])
-    #merge = Article.find_by_title(params[:merge_with])
     merge = Article.find_all_by_title(params[:merge_with]).last
-    puts "orig: "+orig.inspect
-    puts "merge: "+merge.inspect
-    puts "orig.id: " + orig.id.to_s
-    #if !merge or orig==merge
-    #  redirect_to :controller => "admin/content", :action => "edit", :id => orig.id
-    #  return
-    #end
-    if merge and orig != merge  # make sure redirect_to is last method then return
-      puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
+    #puts "orig: "+orig.inspect
+    #puts "merge: "+merge.inspect
+    #puts "orig.id: " + orig.id.to_s
+    if merge and orig != merge  # do only if merge not nil and different from orig
+      #puts "orig id: " + orig.id.to_s + " merge id: " + merge.id.to_s
       orig.body = orig.body + " " + merge.body  # insert "\n" fails
-      puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
-  #    merge.comments.each do |comment|
-  ##      orig.comments << comment       #fails
-  #      comment.article_id = orig.id
-  #      comment.save!                   #fails
-  #    end
-  #    merge.comments.clear
-      puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+      #puts "number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
+      merge.comments.each do |comment|
+        #puts "merging comment " + comment.inspect
+        orig.comments << comment
+        #comment.article_id = orig.id
+        #comment.save!
+        #puts "  merged comment " + comment.id.to_s + " " + comment.article_id.to_s
+      end
+      #merge.comments.clear
+      #puts "after merge number of comments: " + orig.comments.count.to_s + " " + merge.comments.count.to_s
       orig.save!
-  #    merge.destroy  #succeeds, but tries to go to edit page for it
+      #merge.save!
+      #merge.destroy  # destroys previously associated comments as well
     end
     redirect_to :controller => "admin/content", :action => "edit", :id => orig.id
-    #return
+    #return   # no method calls after redirect_to
 #    new_or_edit
   end
 

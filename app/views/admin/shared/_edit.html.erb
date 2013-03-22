@@ -16,13 +16,6 @@
       <%= text_field_tag :merge_with %>
       <%= submit_tag "Merge" %>
     <% end %>
-    
-    <%#= form_for @article, :url => { :controller => "/admin/content", :action => "merge" } do |f| %>
-      <%#= hidden_field_tag "article_id", @article.id %>
-      <%#= label_tag "Merge with" %>
-      <%#= text_field_tag :merge_with %>
-      <%#= f.submit "Merge" %>
-    <%# end %>
     <span class='help-block'><%=_("Enter article title.  Merged articles will have their content merged, and the first author and title selected.") %></span>
     </div>
   </div>

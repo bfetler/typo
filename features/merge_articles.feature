@@ -23,7 +23,6 @@ Feature: Merge Articles
     And I am editing the page for article with title "hey"
     When I fill in "merge_with" with "oh"
     And I press "Merge"
-    Then I should see "hey"
-    And the article title should be "hey"
+    Then the article title should be "hey"
     And the article with title "hey" should have body "yabba dabba doo! oh dear."
     And the article with title "hey" should have "3" comments
