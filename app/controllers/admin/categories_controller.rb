@@ -24,12 +24,22 @@ class Admin::CategoriesController < Admin::BaseController
   private
 
   def new_or_edit
+    puts "new_or_edit params: " + params.inspect
     @categories = Category.find(:all)
-    @category = Category.find(params[:id])
+    # @category = Category.find(params[:id])  # orig
+    #if params[:id]
+    #  @category = Category.find(params[:id])
+    #else
+    #  @category = Category.new
+    #end
+    @category = params[:id] ? Category.find(params[:id]) : Category.new
     @category.attributes = params[:category]
     if request.post?
       respond_to do |format|
-        format.html { save_category }
+        format.html do
+          puts "new_or_edit calling save_category"
+          save_category
+        end
         format.js do 
           @category.save
           @article = Article.new
@@ -43,9 +53,13 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def save_category
-    if @category.save!
+    #puts "save_category params: " + params.inspect
+    #puts "@category: " + @category.inspect
+#    if @category.save!  # orig
+    if @category.save
       flash[:notice] = _('Category was successfully saved.')
     else
+      puts "save_category save failed"
       flash[:error] = _('Category could not be saved.')
     end
     redirect_to :action => 'new'

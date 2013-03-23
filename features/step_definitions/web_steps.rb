@@ -195,6 +195,16 @@ Then /^the article with title "(.+)" should have "(.+)" comments$/ do |title, nu
   assert a.comments.count.to_s == number
 end
 
+Then /^there should be a category with name "(.+)"$/ do |name|
+  c = Category.find_by_name(name)
+  assert !c.nil?
+end
+
+Then /^there should not be a category with name "(.+)"$/ do |name|
+  c = Category.find_by_name(name)
+  assert c.nil?
+end
+
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
   if page.respond_to? :should
     page.should have_content(text)
