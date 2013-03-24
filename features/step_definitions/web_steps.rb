@@ -97,9 +97,23 @@ Given /^comment with author "(.+)" and body "(.+)" for article with title "(.+)"
                     :state => "ham" })
 end
 
-And /^I am editing the page for article with title "(.+)"$/ do |title|
+Given /^category with name "(.+)" exists$/ do |name|
+#  user_id = User.find_by_login(user).id
+  Category.create!({ :name => name,
+                     :keywords => name,
+                     :description => "this is a description"
+                     })
+end
+
+Given /^I am editing the page for article with title "(.+)"$/ do |title|
   article_id = Article.find_by_title(title).id.to_s
   visit '/admin/content/edit/' + article_id
+# save_and_open_page
+end
+
+Given /^I am editing the page for category with name "(.+)"$/ do |name|
+  category_id = Category.find_by_name(name).id.to_s
+  visit '/admin/categories/edit/' + category_id
 # save_and_open_page
 end
 
@@ -203,6 +217,11 @@ end
 Then /^there should not be a category with name "(.+)"$/ do |name|
   c = Category.find_by_name(name)
   assert c.nil?
+end
+
+Then /^category with name "(.*?)" should have description "(.*?)"$/ do |name, description|
+  c = Category.find_by_name(name)
+  assert c.description == description
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
